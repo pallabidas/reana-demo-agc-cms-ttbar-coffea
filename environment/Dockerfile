@@ -14,7 +14,7 @@ COPY requirements.lock /docker/requirements.lock
 RUN yum install -y bzip2 && \
     yum clean all && \
     yum autoremove -y && \
-    curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj -C /usr/local/bin/ --strip-components=1 bin/micromamba && \
+    curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/1.5.9 | tar -xvj -C /usr/local/bin/ --strip-components=1 bin/micromamba && \
     micromamba shell init --prefix /opt/micromamba --shell bash && \
     /usr/local/bin/micromamba shell init --prefix /opt/micromamba && \
     cp /root/.bashrc /etc/.bashrc && \
@@ -54,8 +54,6 @@ RUN mkdir -p -v /etc/condor && \
     ln -s /opt/micromamba/envs/analysis-systems/share/jupyter/kernels/analysis-systems /u0b/software/jupyter/kernels/analysis-systems && \
     mkdir -p -v /.local /.jupyter /.config /.cache /work && \
     chmod --recursive 777 /.local /.jupyter /.config /.cache /work && \
-    printf '#!/bin/bash\n\njupyter lab --no-browser --ip 0.0.0.0 --port 8888\n' > /docker/entrypoint.sh && \
-    chmod 777 /docker/entrypoint.sh && \
     echo 'export JUPYTER_PATH="/opt/micromamba/envs/analysis-systems/share/jupyter:${JUPYTER_PATH}"' >> /etc/.bashrc && \
     echo 'export JUPYTER_DATA_DIR="/opt/micromamba/envs/analysis-systems/share/jupyter"' >> /etc/.bashrc && \
     chmod --recursive 777 /opt/micromamba/envs/analysis-systems/share/jupyter && \
@@ -65,15 +63,6 @@ WORKDIR /work
 
 ENV HOME=/work
 
-SHELL ["/bin/bash", "-lc"]
+ENV PATH="/opt/micromamba/envs/analysis-systems/bin/:${PATH}"
 
-# Installing papermill for 
-RUN micromamba install papermill --channel conda-forge 
-
-
-COPY entrypoint.sh /entrypoint.sh  
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
-
-CMD ["/docker/entrypoint.sh"]
+RUN /bin/bash -l -c "micromamba install papermill --channel conda-forge"

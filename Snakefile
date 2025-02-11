@@ -44,7 +44,7 @@ rule all:
 
 rule process_sample_one_file_in_sample:
     container:
-        "registry.cern.ch/docker.io/reanahub/reana-demo-agc-cms-ttbar-coffea:1.0.0"
+        "docker.io/reanahub/reana-demo-agc-cms-ttbar-coffea:1.0.1"
     resources:
         kubernetes_memory_limit="1850Mi"
     input:
@@ -54,13 +54,12 @@ rule process_sample_one_file_in_sample:
     params:
         sample_name = "{sample}__{condition}"
     shell:
-        "/bin/bash -l && source fix-env.sh && "
         "papermill {input.notebook} $(python prepare_workspace.py sample_{params.sample_name}_{wildcards.index})/sample_{params.sample_name}_{wildcards.index}_out.ipynb "
         "-p sample_name {params.sample_name} -p index {wildcards.index} -k python3"
 
 rule process_sample:
     container:
-        "registry.cern.ch/docker.io/reanahub/reana-demo-agc-cms-ttbar-coffea:1.0.0"
+        "docker.io/reanahub/reana-demo-agc-cms-ttbar-coffea:1.0.1"
     resources:
         kubernetes_memory_limit="1850Mi"
     input:
@@ -71,11 +70,11 @@ rule process_sample:
     params:
         sample_name = '{sample}__{condition}'
     shell:
-        "/bin/bash -l && source fix-env.sh && papermill {input.notebook} merged_{params.sample_name}.ipynb -p sample_name {params.sample_name} -k python3"
+        "papermill {input.notebook} merged_{params.sample_name}.ipynb -p sample_name {params.sample_name} -k python3"
 
 rule merging_histograms:
     container:
-        "registry.cern.ch/docker.io/reanahub/reana-demo-agc-cms-ttbar-coffea:1.0.0"
+        "docker.io/reanahub/reana-demo-agc-cms-ttbar-coffea:1.0.1"
     resources:
         kubernetes_memory_limit="1850Mi"
     input:
@@ -92,6 +91,6 @@ rule merging_histograms:
     output:
         "histograms.root"
     shell:
-        "/bin/bash -l && source fix-env.sh && papermill {input.notebook} result_notebook.ipynb -k python3"
+        "papermill {input.notebook} result_notebook.ipynb -k python3"
 
     

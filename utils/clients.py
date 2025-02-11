@@ -33,6 +33,12 @@ def get_client(af="coffea_casa"):
 
         client = Client()
 
+    elif af == "reana":
+        import os
+        from dask.distributed import Client
+        DASK_SCHEDULER_URI = os.getenv("DASK_SCHEDULER_URI")
+        client = Client(DASK_SCHEDULER_URI)
+
     else:
         raise NotImplementedError(f"unknown analysis facility: {af}")
 
