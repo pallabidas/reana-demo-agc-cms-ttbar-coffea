@@ -4,7 +4,6 @@ inputs:
     - nanoaod_inputs.json
     - corrections.json
     - Snakefile
-    - file_merging.ipynb
     - final_merging.ipynb
     - prepare_workspace.py
   directories:
@@ -18,8 +17,8 @@ workflow:
     kerberos: true
     dask:
       image: registry.cern.ch/docker.io/reanahub/reana-demo-agc-cms-ttbar-coffea:1.0.1
-      number_of_workers: 3
-      single_worker_memory: 4Gi
+      number_of_workers: 40
+      single_worker_memory: 8Gi
   file: Snakefile
 outputs:
   files:
